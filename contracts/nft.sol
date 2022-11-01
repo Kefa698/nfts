@@ -19,6 +19,12 @@ contract Nft is ReentrancyGuard {
         address indexed nftAddress,
         uint256 indexed tokenId
     );
+    event ItemBought(
+        address indexed buyer,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        uint256 price
+    );
 
     mapping(address => mapping(uint256 => Listing)) private s_listings;
     mapping(address => uint256) private s_proceeds;
@@ -71,5 +77,17 @@ contract Nft is ReentrancyGuard {
     {
         delete (s_listings[nftAddress][tokenId]);
         emit ListingCancelled(msg.sender, nftAddress, tokenId);
+    }
+
+    function buyItem(address nftAddress, uint256 tokenId)
+        external
+        payable
+        isListed(nftAddress, tokenId)
+    {
+        Listing memory listedItem = s_listings[nftAddress][tokenId];
+        require(msg.value >= listedItem.price, "price not met");
+        s_proceeds[listedItem.seller] += msg.value;
+        IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
+        emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     }
 }

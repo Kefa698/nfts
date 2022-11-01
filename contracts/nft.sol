@@ -105,4 +105,20 @@ contract Nft is ReentrancyGuard {
         s_listings[nftAddress][tokenId].price = newPrice;
         emit ListingUpdated(msg.sender, nftAddress, tokenId, newPrice);
     }
+
+    function withdraw() external {
+        uint256 proceeds = s_proceeds[msg.sender];
+        require(proceeds > 0, "no proceeds");
+        (bool success, ) = payable(msg.sender).call{value: proceeds}("");
+        require(success, "failed");
+    }
+
+    /////getter functions
+    function getListing(address nftAddress, uint256 tokenId)
+        external
+        view
+        returns (Listing memory)
+    {
+        return s_listings[nftAddress][tokenId];
+    }
 }

@@ -60,6 +60,16 @@ contract Nft is ReentrancyGuard {
         _;
     }
 
+    /////////////////////
+    // Main Functions //
+    /////////////////////
+    /*
+     * @notice Method for listing NFT
+     * @param nftAddress Address of NFT contract
+     * @param tokenId Token ID of NFT
+     * @param price sale price for each item
+     */
+
     function listItem(
         address nftAddress,
         uint256 tokenId,
@@ -76,6 +86,12 @@ contract Nft is ReentrancyGuard {
         emit ItemListed(msg.sender, nftAddress, tokenId, price);
     }
 
+    /*
+     * @notice Method for cancelling listing
+     * @param nftAddress Address of NFT contract
+     * @param tokenId Token ID of NFT
+     */
+
     function cancelListng(address nftAddress, uint256 tokenId)
         external
         isListed(nftAddress, tokenId)
@@ -84,6 +100,15 @@ contract Nft is ReentrancyGuard {
         delete (s_listings[nftAddress][tokenId]);
         emit ListingCancelled(msg.sender, nftAddress, tokenId);
     }
+
+    /*
+     * @notice Method for buying listing
+     * @notice The owner of an NFT could unapprove the marketplace,
+     * which would cause this function to fail
+     * Ideally you'd also have a `createOffer` functionality.
+     * @param nftAddress Address of NFT contract
+     * @param tokenId Token ID of NFT
+     */
 
     function buyItem(address nftAddress, uint256 tokenId)
         external
@@ -97,6 +122,12 @@ contract Nft is ReentrancyGuard {
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     }
 
+    /*
+     * @notice Method for updating listing
+     * @param nftAddress Address of NFT contract
+     * @param tokenId Token ID of NFT
+     * @param newPrice Price in Wei of the item
+     */
     function updatePrice(
         address nftAddress,
         uint256 tokenId,
@@ -106,6 +137,9 @@ contract Nft is ReentrancyGuard {
         emit ListingUpdated(msg.sender, nftAddress, tokenId, newPrice);
     }
 
+    /*
+     * @notice Method for withdrawing proceeds from sales
+     */
     function withdraw() external {
         uint256 proceeds = s_proceeds[msg.sender];
         require(proceeds > 0, "no proceeds");

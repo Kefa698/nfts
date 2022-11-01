@@ -25,6 +25,12 @@ contract Nft is ReentrancyGuard {
         uint256 indexed tokenId,
         uint256 price
     );
+    event ListingUpdated(
+        address indexed seller,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        uint256 price
+    );
 
     mapping(address => mapping(uint256 => Listing)) private s_listings;
     mapping(address => uint256) private s_proceeds;
@@ -89,5 +95,14 @@ contract Nft is ReentrancyGuard {
         s_proceeds[listedItem.seller] += msg.value;
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
+    }
+
+    function updatePrice(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 newPrice
+    ) external isOwner(nftAddress, tokenId, msg.sender) {
+        s_listings[nftAddress][tokenId].price = newPrice;
+        emit ListingUpdated(msg.sender, nftAddress, tokenId, newPrice);
     }
 }

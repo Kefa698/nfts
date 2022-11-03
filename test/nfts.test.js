@@ -6,6 +6,8 @@ const { developmentChains } = require("../helper-hardhat-config")
     ? describe.skip
     : describe("Nft Marketplace Unit Tests", function () {
           let nftMarketplace, nftMarketplaceContract, basicNft, basicNftContract
+          const PRICE = ethers.utils.parseEther("0.1")
+          const TOKEN_ID = 0
 
           beforeEach(async () => {
               accounts = await ethers.getSigners()
@@ -16,5 +18,14 @@ const { developmentChains } = require("../helper-hardhat-config")
               nftMarketplace = await nftMarketplaceContract.connect(deployer)
               basicNftContract = await ethers.getContract("BasicNft")
               basicNft = await basicNftContract.connect(deployer)
+              await basicNft.mintNft()
+              await basicNft.approve(nftMarketplaceContract.address, TOKEN_ID)
+          })
+          describe("listitem", function () {
+              it("emits an event after Listing", async function () {
+                  expect(await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)).to.emit(
+                      "ItemListed"
+                  )
+              })
           })
       })

@@ -27,5 +27,19 @@ const { developmentChains } = require("../helper-hardhat-config")
                       "ItemListed"
                   )
               })
+              it("excludes items that have been listed", async function () {
+                  const error = "already listed"
+                  await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  await expect(
+                      nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  ).to.be.revertedWith(error)
+              })
+              it("only owners can list", async function () {
+                  nftMarketplace = nftMarketplaceContract.connect(user)
+                  await basicNft.approve(user.address, TOKEN_ID)
+                  await expect(
+                      nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  ).to.be.revertedWith("not owner")
+              })
           })
       })

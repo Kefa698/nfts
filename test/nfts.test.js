@@ -54,4 +54,28 @@ const { developmentChains } = require("../helper-hardhat-config")
                   assert(listing.seller.toString() == deployer.address)
               })
           })
+          describe("cancelListing", function () {
+              it("reverts if there is no listing", async function () {
+                  const error = "not listed"
+                  await expect(
+                      nftMarketplace.cancelListing(basicNft.address, TOKEN_ID)
+                  ).to.be.revertedWith(error)
+              })
+              it("reverts if its not owner", async function () {
+                  await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  nftMarketplace = nftMarketplaceContract.connect(user)
+                  await basicNft.approve(user.address, TOKEN_ID)
+                  await expect(
+                      nftMarketplace.cancelListing(basicNft.address, TOKEN_ID)
+                  ).to.be.revertedWith("not owner")
+              })
+              it("emits an event and cancels listing", async function () {
+                  await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  expect(await nftMarketplace.cancelListing(basicNft.address, TOKEN_ID)).to.emit(
+                      "ListingCancelled"
+                  )
+                  const listing = await nftMarketplace.getListing(basicNft.address, TOKEN_ID)
+                  assert(listing.price.toString() == "0")
+              })
+          })
       })

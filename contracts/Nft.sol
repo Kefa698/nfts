@@ -92,7 +92,7 @@ contract Nft is ReentrancyGuard {
      * @param tokenId Token ID of NFT
      */
 
-    function cancelListng(address nftAddress, uint256 tokenId)
+    function cancelListing(address nftAddress, uint256 tokenId)
         external
         isListed(nftAddress, tokenId)
         isOwner(nftAddress, tokenId, msg.sender)

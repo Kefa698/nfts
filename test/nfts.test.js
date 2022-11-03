@@ -41,5 +41,11 @@ const { developmentChains } = require("../helper-hardhat-config")
                       nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
                   ).to.be.revertedWith("not owner")
               })
+              it("needs approval to be listed on marketplace", async function () {
+                  await basicNft.approve(ethers.constants.AddressZero, TOKEN_ID)
+                  await expect(
+                      nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  ).to.be.revertedWith("not approved for marketplace")
+              })
           })
       })

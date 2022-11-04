@@ -86,7 +86,10 @@ const { developmentChains } = require("../helper-hardhat-config")
                   ).to.be.revertedWith(error)
               })
               it("reverts if price isnot met", async function () {
-                
+                  await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  await expect(
+                      nftMarketplace.buyItem(basicNft.address, TOKEN_ID)
+                  ).to.be.revertedWith("price not met")
               })
           })
       })

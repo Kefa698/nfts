@@ -78,4 +78,15 @@ const { developmentChains } = require("../helper-hardhat-config")
                   assert(listing.price.toString() == "0")
               })
           })
+          describe("buyItem", function () {
+              it("reverts if there isnt listing", async function () {
+                  const error = "not listed"
+                  await expect(
+                      nftMarketplace.buyItem(basicNft.address, TOKEN_ID)
+                  ).to.be.revertedWith(error)
+              })
+              it("reverts if price isnot met", async function () {
+                
+              })
+          })
       })

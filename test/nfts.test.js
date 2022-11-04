@@ -103,4 +103,16 @@ const { developmentChains } = require("../helper-hardhat-config")
                   assert(deployerProceeds.toString() == PRICE.toString())
               })
           })
+          describe("updatePrice", function () {
+              it("must be listed and onlyOwner can updatePrice", async function () {
+                  await expect(
+                      nftMarketplace.updateListing(basicNft.address, TOKEN_ID, PRICE)
+                  ).to.be.revertedWith("not listed")
+                  await nftMarketplace.listItem(basicNft.address, TOKEN_ID, PRICE)
+                  nftMarketplace = nftMarketplaceContract.connect(user)
+                  await expect(
+                      nftMarketplace.updateListing(basicNft.address, TOKEN_ID, PRICE)
+                  ).to.be.revertedWith("not owner")
+              })
+          })
       })

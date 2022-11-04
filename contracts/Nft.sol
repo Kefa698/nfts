@@ -128,11 +128,11 @@ contract Nft is ReentrancyGuard {
      * @param tokenId Token ID of NFT
      * @param newPrice Price in Wei of the item
      */
-    function updatePrice(
+    function updateListing(
         address nftAddress,
         uint256 tokenId,
         uint256 newPrice
-    ) external isOwner(nftAddress, tokenId, msg.sender) {
+    ) external isOwner(nftAddress, tokenId, msg.sender) isListed(nftAddress, tokenId) {
         s_listings[nftAddress][tokenId].price = newPrice;
         emit ListingUpdated(msg.sender, nftAddress, tokenId, newPrice);
     }
